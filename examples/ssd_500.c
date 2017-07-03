@@ -93,12 +93,143 @@ int main(void){
                                         1, 1, 6, 6);
 
   // FC7
-  conv_layer fc7 = make_conv_layer_gpu(1, 2, 0, batch, 1034,
+  conv_layer fc7 = make_conv_layer_gpu(1, 2, 0, batch, 1024,
                                         fc6.out_c, fc6.out_h, fc6.out_w,
                                         1, 1, 0, 0,
                                         1, 1, 1, 1);
 
+  // CONV6
+  conv_layer conv6_1 = make_conv_layer_gpu(1, 2, 0, batch, 256,
+                                        fc7.out_c,  fc7.out_h,  fc7.out_w,
+                                        1, 1, 0, 0,
+                                        1, 1, 1, 1);
+  conv_layer conv6_2 = make_conv_layer_gpu(1, 2, 0, batch, 512,
+                                        conv6_1.out_c, conv6_1.out_h, conv6_1.out_w,
+                                        3, 3, 1, 1,
+                                        2, 2, 1, 1);
 
+  // CONV7
+  conv_layer conv7_1 = make_conv_layer_gpu(1, 2, 0, batch, 128,
+                                        conv6_2.out_c,  conv6_2.out_h,  conv6_2.out_w,
+                                        1, 1, 0, 0,
+                                        1, 1, 1, 1);
+  conv_layer conv7_2 = make_conv_layer_gpu(1, 2, 0, batch, 256,
+                                        conv7_1.out_c, conv7_1.out_h, conv7_1.out_w,
+                                        3, 3, 1, 1,
+                                        2, 2, 1, 1);
+
+  // CONV8
+  conv_layer conv8_1 = make_conv_layer_gpu(1, 2, 0, batch, 128,
+                                        conv7_2.out_c,  conv7_2.out_h,  conv7_2.out_w,
+                                        1, 1, 0, 0,
+                                        1, 1, 1, 1);
+  conv_layer conv8_2 = make_conv_layer_gpu(1, 2, 0, batch, 256,
+                                        conv8_1.out_c, conv8_1.out_h, conv8_1.out_w,
+                                        3, 3, 1, 1,
+                                        2, 2, 1, 1);
+
+
+  // CONV9
+  conv_layer conv9_1 = make_conv_layer_gpu(1, 2, 0, batch, 128,
+                                        conv8_2.out_c,  conv8_2.out_h,  conv8_2.out_w,
+                                        1, 1, 0, 0,
+                                        1, 1, 1, 1);
+  conv_layer conv9_2 = make_conv_layer_gpu(1, 2, 0, batch, 256,
+                                        conv9_1.out_c, conv9_1.out_h, conv9_1.out_w,
+                                        3, 3, 1, 1,
+                                        2, 2, 1, 1);
+
+  // CONV9
+  conv_layer conv10_1 = make_conv_layer_gpu(1, 2, 0, batch, 128,
+                                        conv8_2.out_c,  conv8_2.out_h,  conv8_2.out_w,
+                                        1, 1, 0, 0,
+                                        1, 1, 1, 1);
+  conv_layer conv10_2 = make_conv_layer_gpu(1, 2, 0, batch, 256,
+                                        conv10_1.out_c, conv10_1.out_h, conv10_1.out_w,
+                                        4, 4, 1, 1,
+                                        1, 1, 1, 1);
+
+  normalize_layer norm4_3 = make_norm_layer_gpu(); //TODO
+
+  ///////////////////////////////////////////
+  ////////////      OUTPUT    ///////////////
+  ///////////////////////////////////////////
+  // CONV4_3_norm_loc
+  conv_layer conv4_3_norm_loc = make_conv_layer_gpu(0, 0, 0, batch, 16,
+                                        norm4_3.out_c,  norm4_3.out_h,  norm4_3.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+  // CONV4_3_norm_conf
+  conv_layer conv4_3_norm_conf = make_conv_layer_gpu(0, 0, 0, batch, 84,
+                                        norm4_3.out_c,  norm4_3.out_h,  norm4_3.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+
+  // FC7_loc
+  conv_layer fc7_loc = make_conv_layer_gpu(0, 0, 0, batch, 24,
+                                        fc7.out_c,  fc7.out_h,  fc7.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+  // FC7_conf
+  conv_layer fc7_conf = make_conv_layer_gpu(0, 0, 0, batch, 126,
+                                        fc7.out_c,  fc7.out_h,  fc7.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+
+  // CONV6_2_loc
+  conv_layer conv6_2_loc = make_conv_layer_gpu(0, 0, 0, batch, 24,
+                                        conv6_2.out_c,  conv6_2.out_h,  conv6_2.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+  // CONV6_2_conf
+  conv_layer conv6_2_conf = make_conv_layer_gpu(0, 0, 0, batch, 126,
+                                        conv6_2.out_c,  conv6_2.out_h,  conv6_2.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+
+  // CONV7_2_loc
+  conv_layer conv7_2_loc = make_conv_layer_gpu(0, 0, 0, batch, 24,
+                                        conv7_2.out_c,  conv7_2.out_h,  conv7_2.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+  // CONV7_2_conf
+  conv_layer conv7_2_conf = make_conv_layer_gpu(0, 0, 0, batch, 126,
+                                        conv7_2.out_c,  conv7_2.out_h,  conv7_2.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+
+  // CONV8_2_loc
+  conv_layer conv8_2_loc = make_conv_layer_gpu(0, 0, 0, batch, 24,
+                                        conv8_2.out_c,  conv8_2.out_h,  conv8_2.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+  // CONV8_2_conf
+  conv_layer conv8_2_conf = make_conv_layer_gpu(0, 0, 0, batch, 126,
+                                        conv8_2.out_c,  conv8_2.out_h,  conv8_2.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+
+  // CONV9_2_loc
+  conv_layer conv9_2_loc = make_conv_layer_gpu(0, 0, 0, batch, 16,
+                                        conv9_2.out_c,  conv9_2.out_h,  conv9_2.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+  // CONV9_2_conf
+  conv_layer conv9_2_conf = make_conv_layer_gpu(0, 0, 0, batch, 84,
+                                        conv9_2.out_c,  conv9_2.out_h,  conv9_2.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+
+  // CONV10_2_loc
+  conv_layer conv10_2_loc = make_conv_layer_gpu(0, 0, 0, batch, 16,
+                                        conv10_2.out_c,  conv10_2.out_h,  conv10_2.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
+  // CONV10_2_conf
+  conv_layer conv10_2_conf = make_conv_layer_gpu(0, 0, 0, batch, 84,
+                                        conv10_2.out_c,  conv10_2.out_h,  conv10_2.out_w,
+                                        3, 3, 1, 1,
+                                        1, 1, 1, 1);
 
   conv_1_1.forward_gpu(conv_1_1, input_gpu);
   gpu_to_cpu(conv_1_1.output_gpu, output, conv_1_1.output_size);

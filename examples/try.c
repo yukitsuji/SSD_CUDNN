@@ -6,7 +6,7 @@
 #include "softmax.h"
 
 
-int try_c(void){
+int main(void){
   printf("Compile Success\n");
 
   float* input = calloc(16, sizeof(float));

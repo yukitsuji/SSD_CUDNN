@@ -12,6 +12,7 @@ struct conv_layer { //TODO: prev_layerをmake_conv_layerの引数に追加する
   STRUCT_TYPE s_type;
   ACTIVATE_TYPE a_type;
 
+  // Convolution
   float *output;
   float *output_gpu;
   float *weight;
@@ -30,11 +31,13 @@ struct conv_layer { //TODO: prev_layerをmake_conv_layerの引数に追加する
   cudnnConvolutionDescriptor_t convDesc;
   cudnnConvolutionFwdAlgo_t fw_algo;
 
+  // Bias
   float *bias;
   float *bias_gpu;
   size_t bias_size;
   cudnnTensorDescriptor_t biasTensorDesc;
 
+  // Batch Normalization
   float *bn_input;
   float *bn_input_gpu;
   float *bn_scale;
@@ -48,7 +51,6 @@ struct conv_layer { //TODO: prev_layerをmake_conv_layerの引数に追加する
   cudnnTensorDescriptor_t bnTensorDesc;
 
   cudnnActivationDescriptor_t activationDesc;
-
 
 
   void (*forward_gpu)(struct conv_layer, float *input_gpu);
