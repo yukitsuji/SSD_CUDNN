@@ -3,6 +3,7 @@
 
 // #include "cuda_util.h"
 #include "alone_net.h"
+#include "network.h"
 
 struct softmax_layer;
 typedef struct softmax_layer softmax_layer;
@@ -20,7 +21,7 @@ struct softmax_layer {
   int out_w;
 
   cudnnTensorDescriptor_t inputTensorDesc, outputTensorDesc;
-  
+
   void (*forward_gpu)(struct softmax_layer, float *input_gpu);
 };
 

@@ -3,9 +3,4 @@
 
 #include "cuda_util.h"
 
-typedef enum {
-  CONVOLUTION,
-  SOFTMAX,
-} LAYER_TYPE;
-
 #endif

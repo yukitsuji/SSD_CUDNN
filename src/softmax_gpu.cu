@@ -20,13 +20,14 @@ void add_sample(float *a, float *b) {
 
 void forward_softmax_gpu(softmax_layer sl, float *input_gpu) {
   float alpha = 1.0f;
+  float beta = 0.0f;
   CUDNN_CHECK(cudnnSoftmaxForward(cudnn_handler(),
                       CUDNN_SOFTMAX_FAST,
                       CUDNN_SOFTMAX_MODE_INSTANCE,
                       &alpha,
                       sl.inputTensorDesc,
                       input_gpu,
-                      &alpha,
+                      &beta,
                       sl.outputTensorDesc,
                       sl.output_gpu));
 }

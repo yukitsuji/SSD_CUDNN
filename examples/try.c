@@ -42,13 +42,18 @@ int main(void){
   // make_network_gpu(last_layer); 連結リストで順に実行される。 -> 連結リストを作成する。
   // network.predict(); network.train();
   // sl.forward();
-  
-  conv_layer cl = make_conv_layer_gpu(batch, 2, 2, 2, 2,
+
+  conv_layer cl1 = make_conv_layer_gpu(2, 2, 0, batch, 2, 2, 2, 2,
                                          2, 2, 0, 0,
                                          1, 1, 1, 1);
-  cl.forward_gpu(cl, input_gpu);
-  gpu_to_cpu(cl.output_gpu, output, cl.output_size);
-  free_conv_layer_gpu(cl);
+  cl1.forward_gpu(cl1, input_gpu);
+
+  // add bias layer
+  // cl1_bias = make_bias_layer_gpu();
+  // cl1_bias.forward(cl1_bias, )
+
+  gpu_to_cpu(cl1.output_gpu, output, cl1.output_size);
+  free_conv_layer_gpu(cl1);
 
   // softmax_layer sl = make_softmax_layer_gpu(batch, out_c, out_h, out_w);
   // sl.forward_gpu(sl, input_gpu);
