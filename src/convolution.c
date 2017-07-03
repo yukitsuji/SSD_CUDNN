@@ -164,4 +164,18 @@ void free_conv_layer_gpu(conv_layer cl) {
     cudaFree(cl.bias_gpu);
   }
 
+  if (cl.s_type == BATCH_NORM) {
+    free(cl.bn_input);
+    free(cl.bn_scale);
+    free(cl.bn_bias);
+    free(cl.bn_result_mean);
+    free(cl.bn_result_varience);
+    cudaFree(cl.bn_input_gpu);
+    cudaFree(cl.bn_scale_gpu);
+    cudaFree(cl.bn_bias_gpu);
+    cudaFree(cl.bn_result_mean_gpu);
+    cudaFree(cl.bn_result_varience_gpu);
+    CUDNN_CHECK(cudnnDestroyTensorDescriptor(cl.bnTensorDesc));
+  }
+
 }

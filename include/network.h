@@ -6,6 +6,7 @@
 typedef enum {
   CONVOLUTION,
   SOFTMAX,
+  POOLING,
 } LAYER_TYPE;
 
 typedef enum {
@@ -22,6 +23,13 @@ typedef enum {
   CLIPPED_RELU,
   ELU,
 } ACTIVATE_TYPE;
+
+typedef enum {
+  MAX_POOL,
+  AVG_IN,
+  AVG_EX,
+  MAX_DETERM,
+} POOL_TYPE;
 
 struct base_network {
 
