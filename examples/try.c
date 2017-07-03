@@ -6,7 +6,7 @@
 #include "softmax.h"
 
 
-int main(void){
+int try_c(void){
   printf("Compile Success\n");
 
   float* input = calloc(16, sizeof(float));
@@ -43,7 +43,7 @@ int main(void){
   // network.predict(); network.train();
   // sl.forward();
 
-  conv_layer cl1 = make_conv_layer_gpu(2, 2, 0, batch, 2, 2, 2, 2,
+  conv_layer cl1 = make_conv_layer_gpu(1, 2, 0, batch, 2, 2, 2, 2,
                                          2, 2, 0, 0,
                                          1, 1, 1, 1);
   cl1.forward_gpu(cl1, input_gpu);

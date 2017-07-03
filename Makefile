@@ -52,7 +52,7 @@ LDFLAGS+= -lcudnn
 endif
 
 OBJ=cuda_util.o math_util.o convolution.o softmax.o network.o
-EXECOBJA=try.o
+EXECOBJA=ssd_500.o
 ifeq ($(GPU), 1)
 LDFLAGS+= -lstdc++
 OBJ+=convolution_gpu.o softmax_gpu.o cuda_util_gpu.o

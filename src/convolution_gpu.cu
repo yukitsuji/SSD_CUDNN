@@ -52,7 +52,7 @@ void forward_conv_gpu(conv_layer cl, float *input_gpu) {
                       .00001));
   }
 
-  if (cl.a_type != NONE_S) {
+  if (cl.a_type != NONE_A) {
     float one = 1;
     float zero = 0;
     CUDNN_CHECK(cudnnActivationForward(cudnn_handler(),
