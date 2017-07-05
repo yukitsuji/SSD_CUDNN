@@ -16,15 +16,9 @@ extern "C" {
 #include <thrust/sequence.h>
 
 
-__global__ void addKernel(float *a, float *b)
-{
-  int i = threadIdx.x;
-  b[i] = a[i];
-
-}
-
-void add_sample(float *a, float *b) {
-  addKernel<<<1, 16>>>(a, b);
+__global__ void addKernel(float *input) {
+  const int id = blockDim.x * blockIdx.x + threadIdx.x;
+  
 }
 
 void forward_normalize_gpu(normalize_layer nl, float *input_gpu) {
@@ -34,6 +28,9 @@ void forward_normalize_gpu(normalize_layer nl, float *input_gpu) {
   // Pow 2 for whole batch.
 
   // Caluculate Sum for input/output channel and save. Shape is HW.
+  CUBLAS_CHECK(cublasSgemv(cublas_handler(), CUBLAS_OP_N, nl.out_c,
+               nl.out_h * nl.out_w, &alpha, input_gpu, nl.out_c, nl.ones_channel_gpu,
+               1, &beta, nl.out_norm_gpu, 1));
 
   // Pow 1/2 for each batch.
 
