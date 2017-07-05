@@ -31,29 +31,6 @@ normalize_layer make_normalize_layer_gpu(int batch, int in_c, int in_h, int in_w
     nl.scale_gpu = make_gpu_array(&nl.scale_gpu, 0, nl.scale_size);
   }
 
-  //C(m,n) = A(m,k) * B(k,n)
-  //C(m,n) = A(m,k) * B(k,n)
-  // int lda=m,ldb=k,ldc=m;
-  // CUBLAS_CHECK(cublasSgemv(cudnn_handler(), CUBLAS_OP_T, Ncols, Nrows, &alpha,
-  //                          thrust::raw_pointer_cast(d_matrix.data()), Ncols,
-  //                          thrust::raw_pointer_cast(d_ones.data()), 1, &beta,
-  //                          thrust::raw_pointer_cast(d_row_sums_4.data()), 1));
-
-   const Dtype* sum_channel_multiplier = sum_channel_multiplier_.gpu_data();
-   int num = bottom[0]->num();
-   int dim = bottom[0]->count() / num;
-   int spatial_dim = bottom[0]->height() * bottom[0]->width();
-   int channels = bottom[0]->channels();
-   for (int n = 0; n < num; ++n) {
-     caffe_gpu_powx<Dtype>(dim, bottom_data, Dtype(2), buffer_data);
-     if (across_spatial_) {
-       Dtype normsqr;
-       caffe_gpu_asum<Dtype>(dim, buffer_data, &normsqr);
-       // add eps to avoid overflow
-       norm_data[n] = pow(normsqr+eps_, Dtype(0.5));
-       caffe_gpu_scale<Dtype>(dim, Dtype(1.0 / norm_data[n]), bottom_data,
-                              top_data);
-     } else {
        // compute norm
        caffe_gpu_gemv<Dtype>(CblasTrans, channels, spatial_dim, Dtype(1),
                              buffer_data, sum_channel_multiplier, Dtype(1),

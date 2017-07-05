@@ -44,7 +44,7 @@ void gpu_to_cpu(float *x_gpu, float *x, size_t size) {
 }
 
 
-dim3 opt_gridsize(size_t size, const int block_size) {
+inline dim3 opt_gridsize(size_t size, const int block_size) {
   size_t x = (size - 1) / block_size + 1;
   size_t y = 1;
   dim3 d = {x, y, 1};
