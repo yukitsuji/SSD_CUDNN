@@ -7,6 +7,7 @@ typedef enum {
   CONVOLUTION,
   SOFTMAX,
   POOLING,
+  NORMALIZE,
 } LAYER_TYPE;
 
 typedef enum {

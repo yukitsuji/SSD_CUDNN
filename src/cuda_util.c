@@ -3,17 +3,29 @@
 
 #include "cuda_util.h"
 
-static int handler = 0;
+static int cudnnHandler = 0;
+static int cublasHandler = 0;
 static cudnnHandle_t cudnnHandle;
+static cublasHandle_t cublasHandle;
 
 cudnnHandle_t cudnn_handler(){
-  if (handler == 0) {
+  if (cudnnHandler == 0) {
     cudnnHandle_t instant_cudnnHandle;
     CUDNN_CHECK(cudnnCreate(&instant_cudnnHandle));
     cudnnHandle = instant_cudnnHandle;
-    handler = 1;
+    cudnnHandler = 1;
   }
   return cudnnHandle;
+}
+
+cubasHandle_t cublas_handler() {
+  if (cublasHandler == 0) {
+    cublasHandle_t instant_cublasHandle;
+    CUBLAS_CHECK(cublasCreate(&instant_cublasHandle));
+    cublasHandle = instant_cublasHandle;
+    cublasHandler = 1;
+  }
+  return cublasHandle;
 }
 
 void make_gpu_array(float **x_gpu, float *x, size_t size) {
