@@ -1,4 +1,4 @@
-# SSD_CUDNN
+# SSD_CUDNN (In Development)
 Single Shot Multibox Detector by CUDNN and C
 
 
