@@ -4,6 +4,7 @@
 #include "cuda_util.h"
 #include "convolution.h"
 #include "softmax.h"
+#include "pooling.h"
 
 
 int main(void){
@@ -43,9 +44,22 @@ int main(void){
   // network.predict(); network.train();
   // sl.forward();
 
-  conv_layer cl1 = make_conv_layer_gpu(1, 2, 0, batch, 2, 2, 2, 2,
+  // conv_layer cl1 = make_conv_layer_gpu(1, 2, 0, batch, 2, 2, 2, 2,
+  //                                        2, 2, 0, 0,
+  //                                        1, 1, 1, 1);
+  // cl1.forward_gpu(cl1, input_gpu);
+  //
+  // // add bias layer
+  // // cl1_bias = make_bias_layer_gpu();
+  // // cl1_bias.forward(cl1_bias, )
+  //
+  // gpu_to_cpu(cl1.output_gpu, output, cl1.output_size);
+  // free_conv_layer_gpu(cl1);
+
+  pool_layer cl1 = make_pool_layer_gpu(0,
+                                       batch, 2, 2, 2,
                                          2, 2, 0, 0,
-                                         1, 1, 1, 1);
+                                         1, 1);
   cl1.forward_gpu(cl1, input_gpu);
 
   // add bias layer
@@ -53,7 +67,7 @@ int main(void){
   // cl1_bias.forward(cl1_bias, )
 
   gpu_to_cpu(cl1.output_gpu, output, cl1.output_size);
-  free_conv_layer_gpu(cl1);
+  free_pool_layer_gpu(cl1);
 
   // softmax_layer sl = make_softmax_layer_gpu(batch, out_c, out_h, out_w);
   // sl.forward_gpu(sl, input_gpu);
