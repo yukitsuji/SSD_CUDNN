@@ -15,6 +15,9 @@ normalize_layer make_normalize_layer_gpu(int batch, int in_c, int in_h, int in_w
   nl.output = calloc(nl.output_size / sizeof(float), sizeof(float));
   make_gpu_array(&nl.output_gpu, 0, nl.output_size);
 
+  nl.powed_output = calloc(nl.output_size / sizeof(float), sizeof(float));
+  make_gpu_array(&nl.powed_gpu, 0, nl.output_size);
+
   nl.out_norm_size = batch * 1 * nl.out_h * nl.out_w * sizeof(float);
   nl.out_norm = calloc(nl.out_norm_size / sizeof(float), sizeof(float));
   make_gpu_array(&nl.out_norm_gpu, 0, nl.out_norm_size);

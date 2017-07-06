@@ -23,6 +23,8 @@ struct normalize_layer {
   float *scale_gpu;
   float *out_norm;
   float *out_norm_gpu;
+  float *powed_output;
+  float *powed_output_gpu;
   float *ones_channel;
   float *ones_channel_gpu;;
 
