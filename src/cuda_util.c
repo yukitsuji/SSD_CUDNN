@@ -18,7 +18,7 @@ cudnnHandle_t cudnn_handler(){
   return cudnnHandle;
 }
 
-cubasHandle_t cublas_handler() {
+cublasHandle_t cublas_handler() {
   if (cublasHandler == 0) {
     cublasHandle_t instant_cublasHandle;
     CUBLAS_CHECK(cublasCreate(&instant_cublasHandle));

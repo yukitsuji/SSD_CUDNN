@@ -21,17 +21,23 @@ struct normalize_layer {
 
   float *scale;
   float *scale_gpu;
+  size_t scale_size;
+
   float *out_norm;
   float *out_norm_gpu;
+  size_t out_norm_size;
+
   float *powed_output;
   float *powed_output_gpu;
+
   float *ones_channel;
-  float *ones_channel_gpu;;
+  float *ones_channel_gpu;
+  size_t ones_channel_size;
 
   void (*forward_gpu)(struct normalize_layer, float *input_gpu);
 };
 
-normalize_layer make_normalize_layer_gpu(int batch, int out_c, int out_h, int out_w);
+normalize_layer make_normalize_layer_gpu(int batch, int out_c, int out_h, int out_w, int scale);
 void free_normalize_layer_gpu(normalize_layer sl);
 void forward_normalize_gpu(normalize_layer sl, float *input_gpu);
 

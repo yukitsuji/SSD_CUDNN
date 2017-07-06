@@ -77,6 +77,7 @@ static void cublas_status_check(cublasStatus_t status, const char *file, int lin
 // #define KERNEL_CHECK()
 
 cudnnHandle_t cudnn_handler();
+cublasHandle_t cublas_handler();
 dim3 opt_gridsize(size_t size, const int block_size);
 void set_value_gpu(float *x_gpu, const int size, const float value, const int block_size);
 void make_gpu_array(float **x_gpu, float *x, size_t size);
