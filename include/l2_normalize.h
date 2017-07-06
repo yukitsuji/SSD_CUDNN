@@ -40,5 +40,10 @@ struct normalize_layer {
 normalize_layer make_normalize_layer_gpu(int batch, int out_c, int out_h, int out_w, int scale);
 void free_normalize_layer_gpu(normalize_layer sl);
 void forward_normalize_gpu(normalize_layer sl, float *input_gpu);
+__global__ void pow_kernel(const float *input, float *output, const int size, const float alpha);
+__global__ void div_kernel(const float *input, const float *div_input, float *output,
+                           const unsigned int size, const int wh);
+__global__ void mul_kernel(const float *input, const float *mul_input, float *output,
+                           const unsigned int size, const int channel, const int wh);
 
 #endif

@@ -18,9 +18,10 @@ extern "C" {
 #include <cmath>
 
 // Don't hurt input data.
-__global__ void pow_kernel(const float *input, float *output, const unsigned int size, const float alpha) {
+__global__ void pow_kernel(const float *input, float *output, const int size, const float alpha) {
   const int id = blockDim.x * blockIdx.x + threadIdx.x;
   for (int i = id; i < size; i += blockDim.x * gridDim.x) {
+    // printf("%d\n", i);
     output[i] = pow(input[i], alpha);
   }
 }
@@ -47,12 +48,14 @@ void forward_normalize_gpu(normalize_layer nl, float *input_gpu) {
   // Sum powed matrix to input channel per Batch
   // Pow 2 for whole batch.
   pow_kernel<<<opt_gridsize(nl.output_size, 512), 512>>>(input_gpu,
-               nl.powed_output_gpu, nl.output_size, 2.0f);
+               nl.powed_output_gpu, nl.output_size / sizeof(float), 2.0f);
 
   // Caluculate Sum for input/output channel and save. Shape is HW.
-  CUBLAS_CHECK(cublasSgemv(cublas_handler(), CUBLAS_OP_N, nl.out_c,
+  CUBLAS_CHECK(cublasSgemv(cublas_handler(), CUBLAS_OP_T, nl.out_c,
                nl.out_h * nl.out_w, &alpha, nl.powed_output_gpu, nl.out_c,
                nl.ones_channel_gpu, 1, &beta, nl.out_norm_gpu, 1));
+
+  return;
 
   // Pow 1/2 for each batch.B1HW
   pow_kernel<<<opt_gridsize(nl.output_size, 512), 512>>>(nl.out_norm_gpu,
