@@ -4,35 +4,11 @@
 #include "curand.h"
 #include "cublas_v2.h"
 #include "cudnn.h"
-// #include <opencv/cv.h>
-// #include "opencv2/opencv.hpp"
-// #include "opencv2/core/core.hpp"
-// #include "opencv2/gpu/gpu.hpp"
-// #include "opencv2/imgproc/imgproc.hpp"
-// #include "opencv2/highgui/highgui.hpp"
 #include "l2_normalize.h"
-// #include "alone_net"
 #include <stdio.h>
 #include <stdlib.h>
 #include "cuda_util.h"
-#include "softmax.h"
-// using namespace cv;
-// using namespace cv::gpu;
-// using namespace std;
 
-// static void cuda_status_check(cudaError_t status, const char *file, int line) {
-//   cudaDeviceSynchronize();
-//   if (status != cudaSuccess) {
-//     fprintf(stderr, "error [%d] : %s. in File name %s at Line %d\n", status,
-//             cudaGetErrorString(status), file, line);
-//     cudaDeviceReset();
-//     exit(EXIT_FAILURE);
-//   } else {
-//     fprintf(stderr, "Success [%d]. file is %s, Line is %d\n", status, file, line);
-//   }
-// }
-//
-// #define CUDA_CHECK(status) (cuda_status_check(status, __FILE__, __LINE__));
 
 int main (int argc, char *argv[]){
 	if (argc < 2){
@@ -40,59 +16,71 @@ int main (int argc, char *argv[]){
 		return 1;
 	}
 
-	int h = 500;
-	int w = 500;
+	int h = 4;
+	int w = 4;
   int c = 3;
 	int step = w * 3;
 	int i, k, j;
 
-	unsigned char *data;
-	data = (unsigned char *)malloc(h * w * 3 * sizeof(int));
+	float *data;
+	data = calloc(h * w * 3, sizeof(float));
   printf("w step: %d %d\n", w, step);
 
 	for(i = 0; i < h; ++i){
 		for(k= 0; k < c; ++k){
 			for(j = 0; j < w; ++j){
-				data[i*step + j*c + k] = 1;
+				data[i*step + j*c + k] = 2;
 			}
 		}
 	}
 
-	float *image_data;
-	image_data = (float*)malloc(h * w * 3 * sizeof(float));
-	// cv::TickMeter timer6; timer6.start();
-	for(i = 0; i < h; ++i){
-		for(k= 0; k < c; ++k){
-			for(j = 0; j < w; ++j){
-				image_data[k*w*h + i*w + j] = data[i*step + j*c + k]/255.;
-			}
-		}
-	}
-	// timer6.stop();
-	// std::cout << "convert on CPU: " << timer6.getTimeMilli() << std::endl;
+	// float *image_data;
+	// image_data = calloc(h*w*3, sizeof(float));
+	// for(i = 0; i < h; ++i){
+	// 	for(k= 0; k < c; ++k){
+	// 		for(j = 0; j < w; ++j){
+	// 			image_data[k*w*h + i*w + j] = data[i*step + j*c + k]/255.;
+	// 		}
+	// 	}
+	// }
 
 	cudaSetDevice(0);
-	unsigned char *data_gpu;
+	float *data_gpu;
+	float *image_data;
+	image_data = calloc(w * h, sizeof(float));
 	float *image_data_gpu;
-	int size = h * w * 3 * sizeof(unsigned char);
-	CUDA_CHECK(cudaMalloc((void**)&data_gpu, h * w * 3 * sizeof(unsigned char)));
-	CUDA_CHECK(cudaMalloc((void**)&image_data_gpu, h * w * 3 * sizeof(float)));
+	int size = h * w * 3 * sizeof(float);
+
+	CUDA_CHECK(cudaMalloc((void**)&data_gpu, size));
+	// CUDA_CHECK(cudaMalloc((void**)&image_data_gpu, h * w * 3 * sizeof(float)));
 	CUDA_CHECK(cudaMemcpy(data_gpu, data, size, cudaMemcpyHostToDevice));
-	cudaDeviceSynchronize();
-	// cv::TickMeter timer7; timer7.start();
+	CUDA_CHECK(cudaDeviceSynchronize());
 
-	transpose_gpu(image_data_gpu, data_gpu, h, w);
-	cudaDeviceSynchronize();
+  normalize_layer nl = make_normalize_layer_gpu(1, 3, h, w, 0);
+	CUDA_CHECK(cudaDeviceSynchronize());
+  nl.forward_gpu(nl, data_gpu);
+	CUDA_CHECK(cudaDeviceSynchronize());
+  gpu_to_cpu(nl.out_norm_gpu, image_data, w*h*sizeof(float));
+	CUDA_CHECK(cudaDeviceSynchronize());
+  free_normalize_layer_gpu(nl);
 
-	// timer7.stop();
-	// std::cout << "Convert on GPU: " << timer7.getTimeMilli() << std::endl;
-	cudaMemcpy(image_data, image_data_gpu, h * w * 3 * sizeof(float), cudaMemcpyDeviceToHost);
-	cudaDeviceSynchronize();
+	// transpose_gpu(image_data_gpu, data_gpu, h, w);
+	CUDA_CHECK(cudaDeviceSynchronize());
+	printf("Hello World\n");
 
+	printf("Output B: %f\n", image_data[0]); // 500 * 500 * 1
+	printf("Output B: %f\n", image_data[1]);
+	printf("Output B: %f\n", image_data[2]);
+	printf("Output B: %f\n", image_data[3]); // 500 * 500 * 1
+	printf("Output B: %f\n", image_data[4]);
+	printf("Output B: %f\n", image_data[5]);
+	printf("Output B: %f\n", image_data[6]); // 500 * 500 * 1
+	printf("Output B: %f\n", image_data[7]);
+	printf("Output B: %f\n", image_data[8]);
+	printf("Output B: %f\n", image_data[9]); // 500 * 500 * 1
+	printf("Output B: %f\n", image_data[10]);
+	printf("Output B: %f\n", image_data[11]);
   printf("Output B: %f\n", image_data[w * h * 1 - 1]);
-  printf("Output G: %f\n", image_data[w * h * 2 - 1]);
-  printf("Output R: %f\n", image_data[w * h * 3 - 1]);
-	cudaFree(image_data_gpu);
 	cudaFree(data_gpu);
 	free(data);
   cudaDeviceReset();

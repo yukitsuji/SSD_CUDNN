@@ -38,7 +38,8 @@ normalize_layer make_normalize_layer_gpu(int batch, int in_c, int in_h, int in_w
 
   nl.scale_size = nl.out_c * sizeof(float);
   nl.scale = calloc(nl.scale_size / sizeof(float), sizeof(float));
-  make_gpu_array(&nl.scale_gpu, 0, nl.scale_size);
+  for (i=0; i<nl.ones_channel_size / sizeof(float); ++i) nl.scale[i] = i;
+  make_gpu_array(&nl.scale_gpu, nl.scale, nl.scale_size);
 
   CUDA_CHECK(cudaDeviceSynchronize());
   return nl;

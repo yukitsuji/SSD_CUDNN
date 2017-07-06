@@ -47,7 +47,7 @@ int main (int argc, char *argv[]){
 	cudaSetDevice(0);
 	float *data_gpu;
 	float *image_data;
-	image_data = calloc(w * h, sizeof(float));
+	image_data = calloc(w * h * 3, sizeof(float));
 	float *image_data_gpu;
 	int size = h * w * 3 * sizeof(float);
 
@@ -60,7 +60,7 @@ int main (int argc, char *argv[]){
 	CUDA_CHECK(cudaDeviceSynchronize());
   nl.forward_gpu(nl, data_gpu);
 	CUDA_CHECK(cudaDeviceSynchronize());
-  gpu_to_cpu(nl.out_norm_gpu, image_data, w*h*sizeof(float));
+  gpu_to_cpu(nl.output_gpu, image_data, size);
 	CUDA_CHECK(cudaDeviceSynchronize());
   free_normalize_layer_gpu(nl);
 
@@ -81,6 +81,8 @@ int main (int argc, char *argv[]){
 	printf("Output B: %f\n", image_data[10]);
 	printf("Output B: %f\n", image_data[11]);
   printf("Output B: %f\n", image_data[w * h * 1 - 1]);
+	printf("Output B: %f\n", image_data[w * h * 2 - 1]);
+	printf("Output B: %f\n", image_data[w * h * 3 - 1]);
 	cudaFree(data_gpu);
 	free(data);
   cudaDeviceReset();

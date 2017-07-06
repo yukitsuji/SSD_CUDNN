@@ -38,7 +38,7 @@ __global__ void mul_kernel(const float *input, const float *mul_input, float *ou
                            const unsigned int size, const int channel, const int wh) {
   const int id = blockDim.x * blockIdx.x + threadIdx.x;
   for (int i = id; i < size; i += blockDim.x * gridDim.x) {
-    output[i] = input[i] / mul_input[(i / wh) % channel];
+    output[i] = input[i] * mul_input[(i / wh) % channel];
   }
 }
 
@@ -55,8 +55,6 @@ void forward_normalize_gpu(normalize_layer nl, float *input_gpu) {
                nl.out_h * nl.out_w, &alpha, nl.powed_output_gpu, nl.out_c,
                nl.ones_channel_gpu, 1, &beta, nl.out_norm_gpu, 1));
 
-  return;
-
   // Pow 1/2 for each batch.B1HW
   pow_kernel<<<opt_gridsize(nl.output_size, 512), 512>>>(nl.out_norm_gpu,
                nl.out_norm_gpu, nl.out_norm_size, 0.5f);
@@ -65,6 +63,7 @@ void forward_normalize_gpu(normalize_layer nl, float *input_gpu) {
   // divide each batch(CHW) by calculated normalize vector(HW).
   div_kernel<<<opt_gridsize(nl.output_size, 512), 512>>>(input_gpu, nl.out_norm_gpu,
                nl.output_gpu, nl.output_size, nl.out_h * nl.out_w);
+
   // Scale to whole batch.
   mul_kernel<<<opt_gridsize(nl.output_size, 512), 512>>>(nl.output_gpu, nl.scale_gpu,
                nl.output_gpu, nl.output_size, nl.out_c, nl.out_h * nl.out_w);
