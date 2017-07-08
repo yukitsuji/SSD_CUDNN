@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cuda_util.h"
-
+#include "element.h"
 
 int main (int argc, char *argv[]){
 	if (argc < 2){
@@ -29,7 +29,7 @@ int main (int argc, char *argv[]){
 	for(i = 0; i < h; ++i){
 		for(k= 0; k < c; ++k){
 			for(j = 0; j < w; ++j){
-				data[i*step + j*c + k] = 2;
+				data[i*step + j*c + k] = k;
 			}
 		}
 	}
@@ -46,24 +46,26 @@ int main (int argc, char *argv[]){
 
 	cudaSetDevice(0);
 	float *data_gpu;
-	float *image_data;
-	image_data = calloc(w * h * 3, sizeof(float));
-	float *image_data_gpu;
 	int size = h * w * 3 * sizeof(float);
 
+	int *image_data;
+	image_data = calloc(w * h, sizeof(int));
+	int *image_data_gpu;
+
 	CUDA_CHECK(cudaMalloc((void**)&data_gpu, size));
-	// CUDA_CHECK(cudaMalloc((void**)&image_data_gpu, h * w * 3 * sizeof(float)));
+	CUDA_CHECK(cudaMalloc((void**)&image_data_gpu, h * w * sizeof(int)));
 	CUDA_CHECK(cudaMemcpy(data_gpu, data, size, cudaMemcpyHostToDevice));
 	CUDA_CHECK(cudaDeviceSynchronize());
-
-  normalize_layer nl = make_normalize_layer_gpu(1, 3, h, w, 0);
+	int size_vector = size / sizeof(int);
+	element_max_gpu(image_data_gpu, data_gpu, 1, 1);
+  // normalize_layer nl = make_normalize_layer_gpu(1, 3, h, w, 0);
 	CUDA_CHECK(cudaDeviceSynchronize());
-  nl.forward_gpu(nl, data_gpu);
+  // nl.forward_gpu(nl, data_gpu);
 	CUDA_CHECK(cudaDeviceSynchronize());
-  gpu_to_cpu(nl.output_gpu, image_data, size);
+  gpu_to_cpu(image_data_gpu, image_data, h*w*sizeof(int));
 	CUDA_CHECK(cudaDeviceSynchronize());
-  free_normalize_layer_gpu(nl);
-
+  // free_normalize_layer_gpu(nl);
+//
 	// transpose_gpu(image_data_gpu, data_gpu, h, w);
 	CUDA_CHECK(cudaDeviceSynchronize());
 	printf("Hello World\n");
@@ -81,8 +83,8 @@ int main (int argc, char *argv[]){
 	printf("Output B: %f\n", image_data[10]);
 	printf("Output B: %f\n", image_data[11]);
   printf("Output B: %f\n", image_data[w * h * 1 - 1]);
-	printf("Output B: %f\n", image_data[w * h * 2 - 1]);
-	printf("Output B: %f\n", image_data[w * h * 3 - 1]);
+	// printf("Output B: %f\n", image_data[w * h * 2 - 1]);
+	// printf("Output B: %f\n", image_data[w * h * 3 - 1]);
 	cudaFree(data_gpu);
 	free(data);
   cudaDeviceReset();

@@ -52,10 +52,10 @@ LDFLAGS+= -lcudnn
 endif
 
 OBJ=cuda_util.o math_util.o convolution.o softmax.o network.o l2_normalize.o pooling.o
-EXECOBJA=try.o#test.o # try.o #ssd_500.o
+EXECOBJA=test.o # try.o #ssd_500.o
 ifeq ($(GPU), 1)
 LDFLAGS+= -lstdc++
-OBJ+=convolution_gpu.o softmax_gpu.o cuda_util_gpu.o l2_normalize_gpu.o pooling_gpu.o transpose_gpu.o
+OBJ+=convolution_gpu.o softmax_gpu.o cuda_util_gpu.o l2_normalize_gpu.o pooling_gpu.o transpose_gpu.o element_max_gpu.o
 endif
 
 EXECOBJ = $(addprefix $(OBJDIR), $(EXECOBJA))

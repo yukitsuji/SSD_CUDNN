@@ -7,7 +7,7 @@ extern "C" {
 #include "cuda.h"
 }
 
-void forward_pool_layer_gpu(pool_layer pl, float *input_gpu) {
+void forward_pool_gpu(pool_layer pl, float *input_gpu) {
   float alpha = 1.0f;
   float beta = 0.0f;
   CUDNN_CHECK(cudnnPoolingForward(cudnn_handler(),

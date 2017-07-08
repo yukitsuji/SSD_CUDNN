@@ -19,7 +19,7 @@ pool_layer make_pool_layer_gpu(POOL_TYPE p_type,
   pl.out_h = get_pool_mapsize(in_c, kernel_h, pad_h, stride_h);
   pl.out_w = get_pool_mapsize(in_c, kernel_w, pad_w, stride_w);
 
-  pl.forward_gpu = forward_pool_layer_gpu;
+  pl.forward_gpu = forward_pool_gpu;
 
   pl.output_size = batch * pl.out_c * pl.out_h * pl.out_w * sizeof(float);
   pl.output = calloc(pl.output_size / sizeof(float), sizeof(float));

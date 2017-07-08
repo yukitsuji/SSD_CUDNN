@@ -165,6 +165,9 @@ int main(void){
                                         3, 3, 1, 1,
                                         1, 1, 1, 1);
 
+  softmax_layer softmax4_3_conf = make_softmax_gpu(batch, conv4_3_norm_conf.out_c,
+                                        conv4_3_norm_conf.out_h, conv4_3_norm_conf.out_w);
+
   // FC7_loc
   conv_layer fc7_loc = make_conv_layer_gpu(0, 0, 0, batch, 24,
                                         fc7.out_c,  fc7.out_h,  fc7.out_w,
@@ -176,6 +179,8 @@ int main(void){
                                         3, 3, 1, 1,
                                         1, 1, 1, 1);
 
+  softmax_layer softmax_fc7_conf = make_softmax_gpu(batch, fc7_conf.out_c,
+                                        fc7_conf.out_h, fc7_conf.out_w);
   // CONV6_2_loc
   conv_layer conv6_2_loc = make_conv_layer_gpu(0, 0, 0, batch, 24,
                                         conv6_2.out_c,  conv6_2.out_h,  conv6_2.out_w,
@@ -186,7 +191,8 @@ int main(void){
                                         conv6_2.out_c,  conv6_2.out_h,  conv6_2.out_w,
                                         3, 3, 1, 1,
                                         1, 1, 1, 1);
-
+  softmax_layer softmax6_2_conf = make_softmax_gpu(batch, conv6_2_norm_conf.out_c,
+                                        conv6_2_norm_conf.out_h, conv6_2_norm_conf.out_w);
   // CONV7_2_loc
   conv_layer conv7_2_loc = make_conv_layer_gpu(0, 0, 0, batch, 24,
                                         conv7_2.out_c,  conv7_2.out_h,  conv7_2.out_w,
@@ -198,6 +204,8 @@ int main(void){
                                         3, 3, 1, 1,
                                         1, 1, 1, 1);
 
+  softmax_layer softmax7_2_conf = make_softmax_gpu(batch, conv7_2_norm_conf.out_c,
+                                        conv7_2_norm_conf.out_h, conv7_2_norm_conf.out_w);
   // CONV8_2_loc
   conv_layer conv8_2_loc = make_conv_layer_gpu(0, 0, 0, batch, 24,
                                         conv8_2.out_c,  conv8_2.out_h,  conv8_2.out_w,
@@ -208,6 +216,8 @@ int main(void){
                                         conv8_2.out_c,  conv8_2.out_h,  conv8_2.out_w,
                                         3, 3, 1, 1,
                                         1, 1, 1, 1);
+  softmax_layer softmax8_2_conf = make_softmax_gpu(batch, conv8_2_norm_conf.out_c,
+                                        conv8_2_norm_conf.out_h, conv8_2_norm_conf.out_w);
 
   // CONV9_2_loc
   conv_layer conv9_2_loc = make_conv_layer_gpu(0, 0, 0, batch, 16,
@@ -219,6 +229,8 @@ int main(void){
                                         conv9_2.out_c,  conv9_2.out_h,  conv9_2.out_w,
                                         3, 3, 1, 1,
                                         1, 1, 1, 1);
+  softmax_layer softmax9_2_conf = make_softmax_gpu(batch, conv9_2_norm_conf.out_c,
+                                        conv9_2_norm_conf.out_h, conv9_2_norm_conf.out_w);
 
   // CONV10_2_loc
   conv_layer conv10_2_loc = make_conv_layer_gpu(0, 0, 0, batch, 16,
@@ -230,6 +242,9 @@ int main(void){
                                         conv10_2.out_c,  conv10_2.out_h,  conv10_2.out_w,
                                         3, 3, 1, 1,
                                         1, 1, 1, 1);
+                                        
+  softmax_layer softmax10_2_conf = make_softmax_gpu(batch, conv10_2_norm_conf.out_c,
+                                        conv10_2_norm_conf.out_h, conv10_2_norm_conf.out_w);
 
   conv_1_1.forward_gpu(conv_1_1, input_gpu);
   gpu_to_cpu(conv_1_1.output_gpu, output, conv_1_1.output_size);
