@@ -19,7 +19,16 @@ __global__ void transpose_kernel(float *output, unsigned char *input, int w, int
   output[out_x] = input[in_x] - 102.9801; // B 102.9801
   output[out_x + w * h] = input[in_x + 1] - 115.9465; // G 115.9465
   output[out_x + 2 * w * h] = input[in_x + 2] - 122.7717; // R 122.7717
+}
 
+__global__ void transpose_chw_to_hwc_kernels(float *output, unsigned char *input, int c, int wh)
+{
+  int size = c * wh;
+  const int idx = blockDim.x * blockIdx.x + threadIdx.x;
+
+  if(idx >= size) return;
+
+  output[idx / wh + (idx % wh) * c] = input[idx];
 }
 
 void transpose_gpu(float *output, unsigned char *input, int w, int h) {
@@ -32,4 +41,8 @@ void transpose_gpu(float *output, unsigned char *input, int w, int h) {
   dim3 block (x, y, 1);
   dim3 grid  (a, a, 1);
   transpose_kernel<<<block, grid>>>(output, input, w, h);
+}
+
+void transpose_chw_to_hwc_gpu(float *output, unsigned char *input, int c, int wh) {
+  transpose_kernel<<<opt_gridsize(c*wh, 512), 512>>>(output, input, c, wh);
 }

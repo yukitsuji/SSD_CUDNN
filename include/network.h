@@ -8,6 +8,7 @@ typedef enum {
   SOFTMAX,
   POOLING,
   NORMALIZE,
+  MULTIBOX,
 } LAYER_TYPE;
 
 typedef enum {

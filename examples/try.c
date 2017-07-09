@@ -60,6 +60,7 @@ int main(void){
                                        batch, 2, 2, 2,
                                          2, 2, 0, 0,
                                          1, 1);
+  cl1.output_gpu += 1;
   cl1.forward_gpu(cl1, input_gpu);
 
   // add bias layer
