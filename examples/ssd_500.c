@@ -277,7 +277,6 @@ int main(void){
 
   // ここまで、NCHW
   int concat_size;
-
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////         Prior Box     /////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
@@ -324,7 +323,7 @@ int main(void){
   make_gpu_array(&concat_prior_data_gpu, concat_prior_data, concat_size*sizeof(float));
 
   ///////////////////////////////////////////////////
-  ///////////  Concatenated location data  //////////
+  ///////////  Concatenate location data  ///////////
   ///////////////////////////////////////////////////
   float *concat_location_data_gpu;   // HWP4
   int all_concat_location_size;
@@ -370,12 +369,96 @@ int main(void){
   ///////////////////////////////////////////////////
   ///////////  Concatenated Confidence data  ////////
   ///////////////////////////////////////////////////
-  float *concat_conficence_data_gpu; // HWPC
-  extract_max_softmax();
+  float *concat_confidence_data_gpu; // HWPC
+  float *concat_final_confidence_data_gpu; // HWP
+  int class_num = 21;
+  all_concat_confidence_size = conv4_3_norm_conf.output_size / sizeof(float)
+                           + softmax_fc7_conf.output_size / sizeof(float)
+                           + softmax6_2_conf.output_size / sizeof(float)
+                           + softmax7_2_conf.output_size / sizeof(float)
+                           + softmax8_2_conf.output_size / sizeof(float)
+                           + softmax9_2_conf.output_size / sizeof(float)
+                           + softmax10_2_conf.output_size / sizeof(float);
+  // HWPC
+  make_gpu_array(&concat_confidence_data_gpu, 0, all_concat_confidence_size*sizeof(float));
+  // HWP
+  make_gpu_array(&concat_final_confidence_data_gpu, 0, all_concat_confidence_size*sizeof(float) / class_num);
+
   concat_size = 0;
+  transpose_chw_to_hwc_gpu(concat_confidence_data_gpu + concat_size, conv4_3_norm_conf.output_gpu,
+      conv4_3_norm_conf.out_c, conv4_3_norm_conf.out_h * conv4_3_norm_conf.out_w);
+  concat_size += conv4_3_norm_conf.output_size / sizeof(float);
 
+  transpose_chw_to_hwc_gpu(concat_confidence_data_gpu + concat_size, softmax_fc7_conf.output_gpu,
+      softmax_fc7_conf.out_c, softmax_fc7_conf.out_h * softmax_fc7_conf.out_w)
+  concat_size += softmax_fc7_conf.output_size / sizeof(float);
 
-  multibox_decoder_gpu(concat_location_data_gpu, concat_prior_data_gpu, all_concat_location_size);
+  transpose_chw_to_hwc_gpu(concat_confidence_data_gpu + concat_size, softmax6_2_conf.output_gpu,
+      softmax6_2_conf.out_c, softmax6_2_conf.out_h * softmax6_2_conf.out_w)
+  concat_size += softmax6_2_conf.output_size / sizeof(float);
+
+  transpose_chw_to_hwc_gpu(concat_confidence_data_gpu + concat_size, softmax7_2_conf.output_gpu,
+      softmax7_2_conf.out_c, softmax7_2_conf.out_h * softmax7_2_conf.out_w)
+  concat_size += softmax7_2_conf.output_size / sizeof(float);
+
+  transpose_chw_to_hwc_gpu(concat_confidence_data_gpu + concat_size, softmax8_2_conf.output_gpu,
+      softmax8_2_conf.out_c, softmax8_2_conf.out_h * softmax8_2_conf.out_w)
+  concat_size += softmax8_2_conf.output_size / sizeof(float);
+
+  transpose_chw_to_hwc_gpu(concat_confidence_data_gpu + concat_size, softmax9_2_conf.output_gpu,
+      softmax9_2_conf.out_c, softmax9_2_conf.out_h * softmax9_2_conf.out_w)
+  concat_size += softmax9_2_conf.output_size / sizeof(float);
+
+  transpose_chw_to_hwc_gpu(concat_confidence_data_gpu + concat_size, softmax10_2_conf.output_gpu,
+      softmax10_2_conf.out_c, softmax10_2_conf.out_h * softmax10_2_conf.out_w)
+  concat_size += softmax10_2_conf.output_size / sizeof(float);
+
+  // Output is HWP from HWPC
+  concat_size = 0;
+  extract_max_softmax(concat_final_confidence_data_gpu,
+                      concat_confidence_data_gpu,
+                      4, class_num, conv4_3_norm_conf.out_h * conv4_3_norm_conf.out_c); // TODO   HWP HWP4
+  concat_size += conv4_3_norm_conf.output_size / sizeof(float);
+
+  extract_max_softmax(concat_final_confidence_data_gpu + concat_size / class_num,
+                      concat_confidence_data_gpu + concat_size,
+                      6, class_num, softmax_fc7_conf.out_h * softmax_fc7_conf.out_c);
+  concat_size += softmax_fc7_conf.output_size / sizeof(float);
+
+  extract_max_softmax(concat_final_confidence_data_gpu + concat_size / class_num,
+                      concat_confidence_data_gpu + concat_size,
+                      6, class_num, softmax6_2_conf.out_h * softmax6_2_conf.out_c);
+  concat_size += softmax6_2_conf.output_size / sizeof(float);
+
+  extract_max_softmax(concat_final_confidence_data_gpu + concat_size / class_num,
+                      concat_confidence_data_gpu + concat_size,
+                      6, class_num, softmax7_2_conf.out_h * softmax7_2_conf.out_c); // TODO   HWP HWP4
+  concat_size += softmax7_2_conf.output_size / sizeof(float);
+
+  extract_max_softmax(concat_final_confidence_data_gpu + concat_size / class_num
+                      concat_confidence_data_gpu + concat_size,
+                      6, class_num, softmax8_2_conf.out_h * softmax8_2_conf.out_c);
+  concat_size += softmax8_2_conf.output_size / sizeof(float);
+
+  extract_max_softmax(concat_final_confidence_data_gpu + concat_size / class_num,
+                      concat_confidence_data_gpu + concat_size,
+                      4, class_num, softmax9_2_conf.out_h * softmax9_2_conf.out_c);
+  concat_size += softmax9_2_conf.output_size / sizeof(float);
+
+  extract_max_softmax(concat_final_confidence_data_gpu + concat_size / class_num,
+                      concat_confidence_data_gpu + concat_size,
+                      4, class_num, softmax10_2_conf.out_h * softmax10_2_conf.out_c);
+  concat_size += softmax10_2_conf.output_size / sizeof(float);
+
+  // Output is HWP4
+  multibox_decoder_gpu(concat_location_data_gpu, concat_prior_data_gpu, concat_location_data_gpu,
+                       all_concat_confidence_size / 4, 0.1, 0.2);
+
+  // TODO: Use concat_final_confidence_data_gpu, concat_location_data_gpu
+  sort_box_by_confidence(concat_final_confidence_data_gpu, concat_location_data_gpu);
+  
+  // TODO: Sort using thrust::sort_by_key
+  // indexを[0, H * W * P]までsortする。
 
 
   // Concatenate output of softmax and location and priorbox like HWP4, HWPC

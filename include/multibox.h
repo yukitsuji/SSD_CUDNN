@@ -40,10 +40,9 @@ struct multibox_layer {
 multibox_layer make_multibox_layer_gpu(int batch, int out_c, int out_h, int out_w, int scale);
 void free_multibox_layer_gpu(multibox_layer ml);
 void forward_normalize_gpu(multibox_layer ml, float *input_gpu);
-__global__ void pow_kernel(const float *input, float *output, const int size, const float alpha);
-__global__ void div_kernel(const float *input, const float *div_input, float *output,
-                           const unsigned int size, const int wh);
-__global__ void mul_kernel(const float *input, const float *mul_input, float *output,
-                           const unsigned int size, const int channel, const int wh);
+void multibox_decoder_gpu(float *location_gpu, float *priorbox_gpu, float output_gpu, const int whp,
+                          float variance_xy, float variance_wl);
+void extract_max_softmax(float *output, float *input, int prior_num, int class_num,
+                         int wh);
 
 #endif

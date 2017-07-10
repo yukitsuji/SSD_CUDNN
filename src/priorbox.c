@@ -20,51 +20,51 @@ void make_priorbox(float *output,
 
       // first prior: aspect_ratio = 1, size = min_size
       box_width = box_height = min_size;
-      // xmin
-      output[idx++] = (center_x - box_width / 2.) / net_w;
-      // ymin
-      output[idx++] = (center_y - box_height / 2.) / net_h;
-      // xmax
-      output[idx++] = (center_x + box_width / 2.) / net_w;
-      // ymax
-      output[idx++] = (center_y + box_height / 2.) / net_h;
+      // x
+      output[idx++] = (center_x) / net_w;
+      // y
+      output[idx++] = (center_y) / net_h;
+      // width
+      output[idx++] = (box_width) / net_w;
+      // height
+      output[idx++] = (box_height) / net_h;
 
       // second prior: aspect_ratio = 1, size = sqrt(min_size * max_size)
       box_width = box_height = sqrt(min_size * max_size);
-      // xmin
-      output[idx++] = (center_x - box_width / 2.) / net_w;
-      // ymin
-      output[idx++] = (center_y - box_height / 2.) / net_h;
-      // xmax
-      output[idx++] = (center_x + box_width / 2.) / net_w;
-      // ymax
-      output[idx++] = (center_y + box_height / 2.) / net_h;
+      // x
+      output[idx++] = (center_x) / net_w;
+      // y
+      output[idx++] = (center_y) / net_h;
+      // width
+      output[idx++] = (box_width) / net_w;
+      // height
+      output[idx++] = (box_height) / net_h;
 
       aspect_ratio = 2;
       box_width = min_size * sqrt(aspect_ratio);
       box_height = min_size / sqrt(aspect_ratio);
-      // xmin
-      output[idx++] = (center_x - box_width / 2.) / net_w;
-      // ymin
-      output[idx++] = (center_y - box_height / 2.) / net_h;
-      // xmax
-      output[idx++] = (center_x + box_width / 2.) / net_w;
-      // ymax
-      output[idx++] = (center_y + box_height / 2.) / net_h;
+      // x
+      output[idx++] = (center_x) / net_w;
+      // y
+      output[idx++] = (center_y) / net_h;
+      // width
+      output[idx++] = (box_width) / net_w;
+      // height
+      output[idx++] = (box_height) / net_h;
 
       if (use_3_aspect == 0) continue;
 
       aspect_ratio = 3;
       box_width = min_size * sqrt(aspect_ratio);
       box_height = min_size / sqrt(aspect_ratio);
-      // xmin
-      output[idx++] = (center_x - box_width / 2.) / net_w;
-      // ymin
-      output[idx++] = (center_y - box_height / 2.) / net_h;
-      // xmax
-      output[idx++] = (center_x + box_width / 2.) / net_w;
-      // ymax
-      output[idx++] = (center_y + box_height / 2.) / net_h;
+      // x
+      output[idx++] = (center_x) / net_w;
+      // y
+      output[idx++] = (center_y) / net_h;
+      // width
+      output[idx++] = (box_width) / net_w;
+      // height
+      output[idx++] = (box_height) / net_h;
     }
   }
 }
